@@ -213,7 +213,8 @@ void CRSF::set_crsf_channel(uint8_t ch, uint16_t value) {
 }
 
 void CRSF::init_crsf(HardwareSerial *serialPort, uint8_t rxPin, uint8_t txPin) {
-    serial_data = serialPort ? serialPort : &Serial2;
+    // v4.00: Rueckfall auf Serial1 statt Serial2 (der ESP32-C3 hat kein Serial2)
+    serial_data = serialPort ? serialPort : &Serial1;
   serial_data->begin(BAUD_RATE, SERIAL_8N1, rxPin, txPin);
 #if DEBUG_CRSF
   Serial.println("Initializing CRSF...");
