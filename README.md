@@ -4,7 +4,10 @@ CRSF-Multiswitch mit 8 Schaltkanaelen auf einem ESP32-C3 SuperMini.
 
 Kleiner, guenstiger Multiswitch fuer RC-Modelle: Der ESP32-C3 empfaengt CRSF vom Empfaenger und schaltet ueber einen ULN2803A bis zu 8 Verbraucher (Licht, Relais, Funktionen). Das Layout folgt dem CRSF Multiswitch THT v1.1, alle Bauteile ausser den JST-GH-Buchsen sind bedrahtet.
 
-Ausfuehrliche Projektbeschreibung: [docs/Projektbeschreibung.docx](docs/Projektbeschreibung.docx)
+Dokumente:
+- [docs/Projektbeschreibung.docx](docs/Projektbeschreibung.docx): Projektbeschreibung
+- [docs/Hardware-Beschreibung_C3_S3.docx](docs/Hardware-Beschreibung_C3_S3.docx): Hardware-Beschreibung C3 und S3 (Stecker, Kanalzuordnung, Stueckliste, Dimensionierung)
+- [docs/Firmware-Spezifikation.md](docs/Firmware-Spezifikation.md) (auch als DOCX): Firmware-Spezifikation (Basis V3, Router fuer Modulketten, BOOT-Taster, Status-LED)
 
 ## Merkmale
 - 8 Schaltkanaele ueber ULN2803A, Kontroll-LED je Kanal
@@ -47,7 +50,7 @@ Board: ESP32-C3 SuperMini
 ## Ordner
 - `hardware/`: KiCad-Projekt (Schaltplan, PCB, PDF, eigene Footprints, fp-lib-table). Entwurfsnotizen in [hardware/README-hardware.md](hardware/README-hardware.md).
 - `firmware/`: Firmware, noch nicht begonnen.
-- `docs/`: Projektbeschreibung als DOCX.
+- `docs/`: Projektbeschreibung, Hardware-Beschreibung und Firmware-Spezifikation.
 
 ## Stand
 - Hardware: Schaltplan und PCB vorhanden. ERC/DRC noch in KiCad ausfuehren.
