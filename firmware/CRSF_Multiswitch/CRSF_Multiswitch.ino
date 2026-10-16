@@ -1,5 +1,8 @@
 /*
-    ESP32-MultiSwitch  v3.12
+    CRSF-Multiswitch  v4.00  (ESP32-C3 SuperMini / Waveshare ESP32-S3-Zero)
+   v4.00 abgezweigt von ESP32-MultiSwitch v3.12 (Repo ESP32-Multiswitch-
+   CRSF-bidirektional, MultiSwitch_ESP32_V3). Gleicher Quellcode fuer beide
+   Platinen, Board-Auswahl in board_config.h.
    v3.00 erstellt von: PiperPilot - eigenstaendiges, unabhaengig baubares
    Projekt, abgezweigt von ESP32-MultiSwitch v2.02 (siehe ESP32_Multiswitch_2/
    ESP32-Multiswitch-CRSF-bidirektional/). v2.xx bleibt unveraendert bestehen.
@@ -18,25 +21,36 @@
  ESP32-MultiSwitch-V2-Projektbeschreibung-v2.00.docx / README.md.
 
  /////Pin Belegung////
- GPIO 13: WiFi Pin (LOW = AP beim Booten aktiv)
- GPIO 16: SBUS RX  /  CRSF RX
- GPIO 17: CRSF TX  (nur bei RC_System == 4)
- GPIO 18: Ausgang 1
- GPIO 19: Ausgang 2
- GPIO 21: Ausgang 3
- GPIO 22: Ausgang 4
- GPIO 23: Ausgang 5
- GPIO 25: Ausgang 6
- GPIO 26: Ausgang 7
- GPIO 27: Ausgang 8
- GPIO  2: Status LED (AUS = kein Signal, Blinken = verbunden)
+ Siehe board_config.h (C3 und S3) bzw. docs/Hardware-Beschreibung_C3_S3.docx.
+ CRSF und SBUS liegen beide auf UART A (CN1), je nach RC-System.
 
- RC-System Werte:
+ RC-System Werte (unveraendert zu V3):
    0 = FrSky          (SBUS)
    1 = FlySky         (SBUS)
    2 = ELRS normiert  (SBUS)
    3 = HoTT           (SBUS)
    4 = CRSF           (ExpressLRS / TBS CrossFire, bidirektional)
+ Lua-Konfiguration und (ab Schritt 3) Modulkette gibt es nur bei CRSF.
+
+ ÄNDERUNGEN v4.00 (neue Platinen C3/S3, Schritt 1 der Firmware-Spezifikation):
+   - NEU: board_config.h mit Pins, UARTs, BOOT-Taster und Status-LED fuer
+     ESP32-C3 SuperMini (BOARD_C3) und ESP32-S3-Zero (BOARD_S3), automatisch
+     aus dem gewaehlten Chip erkannt.
+   - UART A (CN1) = UART0: C3 RX=IO20/TX=IO21, S3 RX=IO44/TX=IO43. CRSF und
+     SBUS laufen beide dort, je nach RC_System wird beim Booten eines davon
+     gestartet. SBUS bleibt erhalten (Entscheidung 16.10.2026, Annahme A2
+     der Spezifikation gestrichen); die Invertierung macht die UART-Hardware.
+     Debug-Ausgaben ueber USB-CDC ("USB CDC On Boot: Enabled" noetig).
+   - WifiPin (GPIO13) entfaellt; AP wie bisher ueber "Dauerhaft an" und
+     Auto-Failsafe. Der BOOT-Taster folgt in Schritt 2.
+   - C3: nur 6 LEDC-Kanaele, Ausgang 7/8 schalten digital (an ab 50 % Duty,
+     Blinken weiter per Software). Neue Hilfsfunktion outWrite(), nur aus
+     Output() aufgerufen.
+   - Status-LED: S3 WS2812 (IO21) gruen mit V3-Muster (aus = kein Signal,
+     500 ms blinken = verbunden), C3 ohne Status-LED.
+   - NICHT verändert: Ausgangslogik (Konfig 1/2/3, MKan, Blink, PWM, MWprop),
+     CRSF- und SBUS-Auswertung, Lua-Parameterbaum, NVS-Schluessel,
+     Web-UI-Funktionen.
 
  ÄNDERUNGEN v3.12 (CRSF-Fix, übernommen aus v2.03):
    - CRSF "Parameter Version Number" im DEVICE_INFO-Frame war fest 0x00;
@@ -163,11 +177,12 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <Preferences.h>
+#include "board_config.h"
 #include "sbus.h"
 #include "crsf_esp32.h"
 #include "blink_presets.h"
 
-constexpr uint16_t Version = 312; // 3.12 - CRSF Parameter Version Number (Fix aus v2.03)
+constexpr uint16_t Version = 400; // 4.00 - CRSF Parameter Version Number
 
 // ======== SBUS-Schwellen (benannte Konstanten) ==================
 static constexpr uint16_t SBUS_LOW_THRESHOLD  =  800;
@@ -192,9 +207,7 @@ static constexpr int     PWM_RESOLUTION = 8;
 static constexpr uint8_t PWM_MAX        = 255;
 
 // ======== GPIO ==================================================
-static constexpr uint8_t OutPin[8] = {18, 19, 21, 22, 23, 25, 26, 27};
-static constexpr uint8_t WifiPin   = 13;
-static constexpr uint8_t LedPin    = 2;
+// v4.00: OutPin[]/OutPwm[], UARTs und Status-LED siehe board_config.h
 
 // ======== Ausgangszustand =======================================
 int     pwm_wert[8]      = {255, 255, 255, 255, 255, 255, 255, 255};
@@ -228,7 +241,7 @@ bool          blinkOn[8]          = {};
 // ======== RC-Bus ================================================
 int  RC_System_boot = 0;
 
-bfs::SbusRx   sbus_rx(&Serial1, 16, 17, true); // Serial1 fuer SBUS (GPIO16/17)
+bfs::SbusRx   sbus_rx(&UART_A_SERIAL, UART_A_RX, UART_A_TX, true); // v4.00: SBUS auf UART A (wie CRSF)
 bfs::SbusData sbus_data;
 
 CRSF crsf;
@@ -461,16 +474,25 @@ void storageSave() { nvsFlushPending(); }
 static unsigned long ledPrevMs = 0;
 static bool          ledState  = false;
 
+// v4.00: Ausgabe ueber statusLedWrite() - S3 WS2812 gruen, C3 ohne LED.
+static void statusLedWrite(bool on) {
+#if STATUS_LED_WS2812
+    neopixelWrite(STATUS_LED_PIN, 0, on ? STATUS_LED_BRIGHTNESS : 0, 0);
+#else
+    (void)on;
+#endif
+}
+
 static void updateLed() {
     if (!BUS_OK) {
-        digitalWrite(LedPin, LOW);
+        if (ledState) { ledState = false; statusLedWrite(false); }
         return;
     }
     unsigned long now = millis();
     if (now - ledPrevMs >= 500) {
         ledPrevMs = now;
         ledState  = !ledState;
-        digitalWrite(LedPin, ledState ? HIGH : LOW);
+        statusLedWrite(ledState);
     }
 }
 
@@ -710,7 +732,7 @@ static void crsfSendParam(uint8_t idx) {
         crsf.send_param_response_CRSF_FOLDER(0, 0, "",
             {1,2,5,14,23,32,41,50,59,68,77});
     } else if (idx == 1) {
-        crsf.send_param_response_CRSF_INFO(1, 0, "Version", "v3.12 ESP32");
+        crsf.send_param_response_CRSF_INFO(1, 0, "Version", "v4.00 " BOARD_NAME);
     } else if (idx == 2) {
         crsf.send_param_response_CRSF_FOLDER(2, 0, "Global", {3,4});
     } else if (idx == 3) {
@@ -970,8 +992,17 @@ static bool evalSlotActive(int k, int pv, uint16_t d) {
     return false;
 }
 
+// ======== Ausgang schreiben (NEU v4.00) ==========================
+// Einziger Ort mit ledcWrite() auf OutPin[], nur aus Output() aufgerufen.
+// Ausgaenge ohne LEDC-Kanal (C3: Ausgang 7/8, OutPwm[x]==false) schalten
+// digital: an ab 50 % Duty.
+static void outWrite(int x, uint8_t duty) {
+    if (OutPwm[x]) ledcWrite(OutPin[x], duty);
+    else           digitalWrite(OutPin[x], duty >= 128 ? HIGH : LOW);
+}
+
 // ======== Output ================================================
-// Zentrale Ausgabefunktion – EINZIGER Ort, der ledcWrite() auf OutPin[] aufruft.
+// Zentrale Ausgabefunktion – EINZIGER Aufrufer von outWrite().
 static void Output(uint16_t d) {
     unsigned long now = millis();
     for (int x = 0; x < 8; x++) {
@@ -1021,22 +1052,22 @@ static void Output(uint16_t d) {
                     if (now - previousTimeLED[x] >= (unsigned long)(10 * modeL)) {
                         previousTimeLED[x] = now;
                         blinkOn[x] = true;
-                        ledcWrite(OutPin[x], duty);
+                        outWrite(x, duty);
                     }
                 } else {
                     if (now - previousTimeLED[x] >= (unsigned long)(10 * modeH)) {
                         previousTimeLED[x] = now;
                         blinkOn[x] = false;
-                        ledcWrite(OutPin[x], 0);
+                        outWrite(x, 0);
                     }
                 }
             } else {
                 blinkOn[x] = true;
-                ledcWrite(OutPin[x], duty);
+                outWrite(x, duty);
             }
         } else {
             blinkOn[x] = false;
-            ledcWrite(OutPin[x], 0);
+            outWrite(x, 0);
         }
     }
 }
@@ -1049,27 +1080,33 @@ void setup() {
     RC_System_boot = RC_System;
 
     if (RC_System_boot == 4) {
-        crsf.init_crsf(&Serial2, 16, 17); // Serial2 fuer CRSF (GPIO16=RX, 17=TX)
+        // v4.00: CRSF auf UART A (UART0), Pins siehe board_config.h
+        crsf.init_crsf(&UART_A_SERIAL, UART_A_RX, UART_A_TX);
         crsf.setDeviceAddress(crsfAddrFromWM());   // eindeutige CRSF-Adresse aus WM-Adresse
-        Serial.printf("CRSF gestartet (RX=16, TX=17, 420000 Bd)  Geraeteadresse 0x%02X  Slot %d\n",
+        Serial.printf("CRSF gestartet (Board %s, RX=%d, TX=%d, 420000 Bd)  Geraeteadresse 0x%02X  Slot %d\n",
+                      BOARD_NAME, UART_A_RX, UART_A_TX,
                       crsfAddrFromWM(), (uint8_t)constrain(modul_adress,0,15)*2);
     } else {
-        sbus_rx.Begin();
-        Serial.printf("SBUS gestartet (RX=16, RC-System=%d)\n", RC_System_boot);
+        sbus_rx.Begin();   // v4.00: ebenfalls UART A
+        Serial.printf("SBUS gestartet (Board %s, RX=%d, RC-System=%d)\n",
+                      BOARD_NAME, UART_A_RX, RC_System_boot);
     }
 
     for (int i = 0; i < 8; i++) {
-        ledcAttach(OutPin[i], PWM_FREQ, PWM_RESOLUTION);
-        ledcWrite(OutPin[i], 0);
+        if (OutPwm[i]) {
+            ledcAttach(OutPin[i], PWM_FREQ, PWM_RESOLUTION);
+            ledcWrite(OutPin[i], 0);
+        } else {
+            pinMode(OutPin[i], OUTPUT);   // C3: Ausgang 7/8 ohne LEDC-Kanal
+            digitalWrite(OutPin[i], LOW);
+        }
     }
 
-    pinMode(WifiPin, INPUT_PULLUP);
-    pinMode(LedPin,  OUTPUT);
-    digitalWrite(LedPin, LOW);
+    statusLedWrite(false);
 
     webui_init();
 
-    Serial.printf("MultiSwitch ESP32 v%d.%02d\n", Version / 100, Version % 100);
+    Serial.printf("CRSF-Multiswitch %s v%d.%02d\n", BOARD_NAME, Version / 100, Version % 100);
     Serial.printf("SSID: %s\n", g_wifi_ssid);
     Serial.printf("IP:   %s\n", AP_IP_STR);
 }

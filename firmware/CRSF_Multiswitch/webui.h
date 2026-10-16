@@ -1,5 +1,5 @@
 /*
- * webui.h  –  WiFi-Weboberfläche für ESP32-MultiSwitch  v3.12
+ * webui.h  –  WiFi-Weboberfläche für CRSF-Multiswitch C3/S3  v4.00
  * NEU V3.00: MKan-Gruppen (2 zusaetzliche, unabhaengige Kanalquellen) -
  * siehe Kommentar bei MULTISW_NUM_GROUPS in MultiSwitch_ESP32_V3.ino.
  * NEU V3.10: bis zu 3 Konfigurationen (Kanal-Quelle + Blink/PWM) pro
@@ -391,7 +391,7 @@ main{max-width:560px;margin:0 auto;padding:20px 14px 60px}
           <option value="1">Ein</option>
         </select>
       </div>
-      <span style="color:var(--sub);font-size:12px;display:block">Schaltet den Access Point beim Booten immer ein und nie wieder aus - unabh&auml;ngig vom Bootpin (GPIO13) und vom Auto-Failsafe unten. Wirkt erst nach dem n&auml;chsten Neustart. Default AN.</span>
+      <span style="color:var(--sub);font-size:12px;display:block">Schaltet den Access Point beim Booten immer ein und nie wieder aus - unabh&auml;ngig vom Auto-Failsafe unten. Wirkt erst nach dem n&auml;chsten Neustart. Default AN.</span>
     </div>
     <div class="card">
       <div class="card-title">WLAN jetzt (NEU v2.00)</div>
@@ -1650,9 +1650,9 @@ void webui_init() {
     // NEU v2.02: WLAN dauerhaft an (g_wifi_always_on) uebersteuert den
     // GPIO13-Bootpin vollstaendig - siehe Kommentar bei g_wifi_always_on
     // in der .ino. Default AN, siehe Migrations-Default in nvsLoad().
+    // v4.00: WifiPin (GPIO13) entfaellt auf den C3/S3-Platinen; der
+    // BOOT-Taster zum Umschalten folgt in Schritt 2.
     if (g_wifi_always_on) {
-        webui_enableAP();
-    } else if (!digitalRead(WifiPin)) {
         webui_enableAP();
     }
     webServer.on("/",            HTTP_GET,  []{ webServer.send_P(200,"text/html",WEBUI_HTML); });
