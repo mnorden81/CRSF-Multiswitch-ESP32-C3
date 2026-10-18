@@ -1,6 +1,8 @@
-# CRSF-Multiswitch-ESP32-C3
+# RC-Multiswitch-ESP32-C3
 
-CRSF-Multiswitch mit 8 Schaltkanaelen auf einem ESP32-C3 SuperMini.
+RC-Multiswitch mit 8 Schaltkanaelen auf einem ESP32-C3 SuperMini.
+
+Frueher `CRSF-Multiswitch-ESP32-C3`. Der neue Name ist neutral, weil der Multiswitch neben CRSF auch SBUS (UART A) als Eingang versteht.
 
 Kleiner, guenstiger Multiswitch fuer RC-Modelle: Der ESP32-C3 empfaengt CRSF vom Empfaenger und schaltet ueber einen ULN2803A bis zu 8 Verbraucher (Licht, Relais, Funktionen). Das Layout folgt dem CRSF Multiswitch THT v1.1, alle Bauteile ausser den JST-GH-Buchsen sind bedrahtet.
 
@@ -42,7 +44,7 @@ Board: ESP32-C3 SuperMini
 - Footprint ESP32-C3-SuperMini_THT ist eine eigene Zeichnung (2x8, 2,54 mm, Reihenabstand 15,24 mm). Vor der Fertigung 1:1 am echten Board pruefen.
 
 ## Firmware (v4.01)
-- Arduino-Sketch `firmware/CRSF_Multiswitch`, gleicher Quellcode fuer C3 und S3 (Board wird automatisch erkannt). Basis: MultiSwitch_ESP32_V3 v3.12.
+- Arduino-Sketch `firmware/RC_Multiswitch`, gleicher Quellcode fuer C3 und S3 (Board wird automatisch erkannt). Basis: MultiSwitch_ESP32_V3 v3.12.
 - CRSF auf UART A, wahlweise SBUS. Modulkette ueber UART B (und UART C beim S3): jedes Modul mit eigener Adresse ist ueber Lua einzeln einstellbar.
 - BOOT-Taster 3 s: WLAN-AP ein/aus. Status-LED nur beim S3.
 - Details und Bauanleitung: [firmware/README.md](firmware/README.md).
