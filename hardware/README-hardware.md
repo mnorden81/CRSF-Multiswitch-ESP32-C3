@@ -1,4 +1,4 @@
-# CRSF-Multiswitch-ESP32-C3 (v0.3, Entwurf)
+# RC-Multiswitch-ESP32-C3 (v0.3, Entwurf)
 Ein Multiswitch nach CRSF Multiswitch THT v1.1, ULN2803A, 8 Kanaele.
 
 - Last: 12-24V (VLOAD, JST PH 2 an CN2 - Achtung: max. ca. 2A je Kontakt; TVS P6KE33A), max. 500mA je Kanal.
