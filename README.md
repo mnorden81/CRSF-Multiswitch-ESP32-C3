@@ -41,22 +41,22 @@ Board: ESP32-C3 SuperMini
 - IO8 haengt beim SuperMini an der Onboard-LED, IO9 am BOOT-Taster. UART B RX liegt auf IO8.
 - Footprint ESP32-C3-SuperMini_THT ist eine eigene Zeichnung (2x8, 2,54 mm, Reihenabstand 15,24 mm). Vor der Fertigung 1:1 am echten Board pruefen.
 
-## Firmware (geplant)
-- CRSF als einziges Protokoll, busfaehig ueber die UART-Anschluesse (Eingang plus Weiterleitung zum naechsten Modul).
-- Gemeinsame CRSF-Bibliothek als Kopie im Projekt (firmware/lib), keine externe Abhaengigkeit.
-- Einstellung der Adresse und Parameter ueber CRSF-Parameter (Lua am Sender) und Web-UI.
-- Build mit PlatformIO, Bauweise wie bei den Sound-Mini-Repos.
+## Firmware (v4.01)
+- Arduino-Sketch `firmware/CRSF_Multiswitch`, gleicher Quellcode fuer C3 und S3 (Board wird automatisch erkannt). Basis: MultiSwitch_ESP32_V3 v3.12.
+- CRSF auf UART A, wahlweise SBUS. Modulkette ueber UART B (und UART C beim S3): jedes Modul mit eigener Adresse ist ueber Lua einzeln einstellbar.
+- BOOT-Taster 3 s: WLAN-AP ein/aus. Status-LED nur beim S3.
+- Details und Bauanleitung: [firmware/README.md](firmware/README.md).
 
 ## Ordner
 - `hardware/`: KiCad-Projekt (Schaltplan, PCB, PDF, eigene Footprints, fp-lib-table). Entwurfsnotizen in [hardware/README-hardware.md](hardware/README-hardware.md).
-- `firmware/`: Firmware, noch nicht begonnen.
+- `firmware/`: Firmware v4.01 (Arduino-Sketch).
 - `docs/`: Projektbeschreibung, Hardware-Beschreibung und Firmware-Spezifikation.
 
 ## Stand
 - Hardware: Schaltplan und PCB vorhanden. ERC/DRC noch in KiCad ausfuehren.
-- Firmware: noch nicht begonnen.
+- Firmware: v4.01 kompiliert fuer C3 und S3, noch nicht auf Hardware getestet.
 
 ## Offene Punkte
 - Pad-Namen und Footprint am realen Board pruefen
 - Verlustleistung des ULN2803A bei mehreren Kanaelen mit 500 mA pruefen
-- Firmware schreiben
+- Firmware auf Hardware testen (Einzelmodul und Kette mit 2-3 Modulen)
