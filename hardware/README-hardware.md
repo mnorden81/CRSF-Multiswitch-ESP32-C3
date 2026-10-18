@@ -1,9 +1,9 @@
 # RC-Multiswitch-ESP32-C3 (v0.3, Entwurf)
 Ein Multiswitch nach CRSF Multiswitch THT v1.1, ULN2803A, 8 Kanaele.
 
-- Last: 12-24V (VLOAD, JST PH 2 an CN2 - Achtung: max. ca. 2A je Kontakt; TVS P6KE33A), max. 500mA je Kanal.
-- R9-R16 (THT 1/4W, Standard 150R) zwischen ULN-Ausgang und Stiftleiste J1: je Verbraucher waehlen, Leistung beachten.
-- R1-R8 (150R) + LED1-8 (3mm): Kontroll-LED je Kanal, vom Steuersignal Sn gegen GND.
+- Last: 5-12V (VLOAD, JST PH 2 an CN2 - Achtung: max. ca. 2A je Kontakt; TVS P6KE18A), max. 500mA je Kanal.
+- R9-R16 (THT 1/4W) zwischen ULN-Ausgang und Stiftleiste J1: kein Wert vorgegeben, der Anwender legt sie je Verbraucher aus, Leistung beachten.
+- R1-R8 (Wert vom Anwender, Empfehlung auf der Platine) + LED1-8 (3mm): Kontroll-LED je Kanal, vom Steuersignal Sn gegen GND.
 - Keine Pulldowns, keine Widerstaende in den UART-Leitungen.
 - ESP32 wird aus +5V von CN1 (BEC/Empfaenger) versorgt.
 - S0..S7 = IO0..IO7; UART A (Eingang): RX=IO20, TX=IO21; UART B (zusaetzlich): TX=IO10, RX=IO8. Adresse per Firmware/Web-UI/Lua.

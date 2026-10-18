@@ -14,16 +14,16 @@ Dokumente:
 ## Merkmale
 - 8 Schaltkanaele ueber ULN2803A, Kontroll-LED je Kanal
 - UART A (Eingang vom Empfaenger) und UART B (Weiterleitung zum naechsten Modul)
-- Versorgung des ESP32 aus +5 V des Empfaengers, Last getrennt mit 12-24 V
+- Versorgung des ESP32 aus +5 V des Empfaengers, Last getrennt mit 5-12 V
 - Eigener THT-Footprint fuer den SuperMini im Projekt
 
 ## Hardware (v0.3 (Entwurf))
 Board: ESP32-C3 SuperMini
 
-- Lastspannung 12-24 V (VLOAD) an CN2 (JST PH 2), TVS-Diode P6KE33A als Schutz.
+- Lastspannung 5-12 V (VLOAD) an CN2 (JST PH 2), TVS-Diode P6KE18A als Schutz.
 - Treiber ULN2803A, 8 Kanaele, max. 500 mA je Kanal (Verlustleistung des ULN2803A bei mehreren Kanaelen beachten).
-- R9-R16 (THT 1/4 W, Standard 150 R) zwischen ULN-Ausgang und Stiftleiste J1, je nach Verbraucher waehlen.
-- R1-R8 und LED1-LED8 (3 mm) als Kontroll-LED je Kanal, vom Steuersignal Sn gegen GND.
+- R9-R16 (THT 1/4 W) zwischen ULN-Ausgang und Stiftleiste J1: kein Wert vorgegeben, der Anwender legt sie passend zu Verbraucher und Lastspannung aus.
+- R1-R8 und LED1-LED8 (3 mm) als Kontroll-LED je Kanal, vom Steuersignal Sn gegen GND. Werte legt der Anwender fest, eine Empfehlung ist auf der Platine aufgedruckt.
 - Keine Pulldowns und keine Widerstaende in den UART-Leitungen. Der ESP32 wird aus +5 V von CN1 (BEC/Empfaenger) versorgt.
 
 ### Belegung
@@ -36,7 +36,7 @@ Board: ESP32-C3 SuperMini
 ### Anschluesse
 - CN1 UART A (JST-GH 4): 1 GND, 2 +5 V, 3 RX, 4 TX
 - J5 UART B (JST-GH 4): 1 GND, 2 +5 V, 3 TX, 4 RX (1:1-Kabel zum naechsten Modul)
-- CN2 Last 12-24 V (JST PH 2, max. ca. 2 A je Kontakt)
+- CN2 Last 5-12 V (JST PH 2, max. ca. 2 A je Kontakt)
 - J1 Ausgaenge S0..S7
 
 ### Hinweise
