@@ -1780,7 +1780,7 @@
 					)
 				)
 			)
-			(property "Value" "Last 12-24V (JST PH)"
+			(property "Value" "Last 5-12V (JST PH)"
 				(at 0 -6.58 0)
 				(effects
 					(font
@@ -2549,7 +2549,7 @@
 		)
 		(uuid "496454b3-5ef4-443e-81e9-004a6a556930")
 	)
-	(text "Last: max. 24V / 500mA je Kanal. ESP32 wird aus +5V von CN1 (BEC/Empfaenger) versorgt. Adresse per Firmware/Web-UI/Lua. Keine Pulldowns, keine UART-Vorwiderstaende. R9-R16 und R1-R8: Standard 150R, je Verbraucher waehlen."
+	(text "Last: 5-12V, max. 500mA je Kanal. ESP32 wird aus +5V von CN1 (BEC/Empfaenger) versorgt. Adresse per Firmware/Web-UI/Lua. Keine Pulldowns, keine UART-Vorwiderstaende. R1-R16: Werte legt der Anwender je LED bzw. Verbraucher selbst aus (siehe Projektbeschreibung)."
 		(exclude_from_sim no)
 		(at 15 21 0)
 		(effects
@@ -2560,7 +2560,7 @@
 		)
 		(uuid "4b7c47bc-3650-4fea-b1db-e0cab9318760")
 	)
-	(text "D1: TVS Anode GND, Kathode VLOAD (P6KE33A: ok bis 24V)"
+	(text "D1: TVS Anode GND, Kathode VLOAD (P6KE18A: ok bis 12V)"
 		(exclude_from_sim no)
 		(at 30 66 0)
 		(effects
@@ -2615,7 +2615,7 @@
 		)
 		(uuid "8b7f9801-1012-4575-a020-7f3ec08549a0")
 	)
-	(text "Lastversorgung 12-24V (VLOAD)"
+	(text "Lastversorgung 5-12V (VLOAD)"
 		(exclude_from_sim no)
 		(at 15 40 0)
 		(effects
@@ -4897,7 +4897,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 124.92 270)
 			(effects
 				(font
@@ -5032,7 +5032,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 94.44 270)
 			(effects
 				(font
@@ -5848,7 +5848,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 102.06 270)
 			(effects
 				(font
@@ -6111,7 +6111,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 117.3 270)
 			(effects
 				(font
@@ -6241,7 +6241,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 79.2 270)
 			(effects
 				(font
@@ -6568,7 +6568,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 109.68 270)
 			(effects
 				(font
@@ -6770,7 +6770,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 79.2 270)
 			(effects
 				(font
@@ -6836,7 +6836,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 132.54 270)
 			(effects
 				(font
@@ -6902,7 +6902,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 109.68 270)
 			(effects
 				(font
@@ -7082,7 +7082,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 117.3 270)
 			(effects
 				(font
@@ -7148,7 +7148,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 124.92 270)
 			(effects
 				(font
@@ -7278,7 +7278,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 132.54 270)
 			(effects
 				(font
@@ -7344,7 +7344,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 102.06 270)
 			(effects
 				(font
@@ -7410,7 +7410,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 86.82 270)
 			(effects
 				(font
@@ -7545,7 +7545,7 @@
 				)
 			)
 		)
-		(property "Value" "12V"
+		(property "Value" "5-12V"
 			(at 35.56 59.38 0)
 			(effects
 				(font
@@ -7680,7 +7680,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 116.84 94.44 270)
 			(effects
 				(font
@@ -7918,7 +7918,7 @@
 				)
 			)
 		)
-		(property "Value" "P6KE33A"
+		(property "Value" "P6KE18A"
 			(at 71.12 56.84 0)
 			(effects
 				(font
@@ -8048,7 +8048,7 @@
 				)
 			)
 		)
-		(property "Value" "150"
+		(property "Value" "R"
 			(at 218.44 86.82 270)
 			(effects
 				(font
