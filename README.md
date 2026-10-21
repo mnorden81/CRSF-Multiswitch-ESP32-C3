@@ -13,7 +13,7 @@ Dokumente:
 
 ## Merkmale
 - 8 Schaltkanaele ueber ULN2803A, Kontroll-LED je Kanal
-- UART A (Eingang vom Empfaenger) und UART B (Weiterleitung zum naechsten Modul)
+- UART A (Eingang vom Empfaenger) und UART B (Rolle waehlbar: Modulkette CRSF, S.Port-LiPo-Sensoren oder GPS)
 - Versorgung des ESP32 aus +5 V des Empfaengers, Last getrennt mit 5-12 V
 - Eigener THT-Footprint fuer den SuperMini im Projekt
 
@@ -41,24 +41,26 @@ Board: ESP32-C3 SuperMini
 
 ### Hinweise
 - IO8 haengt beim SuperMini an der Onboard-LED, IO9 am BOOT-Taster. UART B RX liegt auf IO8.
+- **Risiko IO2 (Ausgang 3):** IO2 ist ein Strapping-Pin und muss beim Einschalten HIGH sein. LED3/R3 und der ULN2803A-Eingang koennen ihn nach LOW ziehen, der C3 startet dann evtl. nicht sicher. Die Platine bleibt so (bereits bestellt). Beim ersten Aufbau mehrmals ein- und ausschalten; Abhilfe siehe [firmware/README.md](firmware/README.md#bekanntes-risiko-c3-io2-ausgang-3-ist-ein-strapping-pin).
 - Footprint ESP32-C3-SuperMini_THT ist eine eigene Zeichnung (2x8, 2,54 mm, Reihenabstand 15,24 mm). Vor der Fertigung 1:1 am echten Board pruefen.
 
-## Firmware (v4.03)
+## Firmware (v4.04)
 - Arduino-Sketch `firmware/RC_Multiswitch`, gleicher Quellcode fuer C3 und S3 (Board wird automatisch erkannt). Basis: MultiSwitch_ESP32_V3 v3.12.
-- CRSF auf UART A, wahlweise SBUS. Modulkette ueber UART B (und UART C beim S3): jedes Modul mit eigener Adresse ist ueber Lua einzeln einstellbar.
+- CRSF auf UART A, wahlweise SBUS. UART B (und UART C beim S3) per Lua oder Web-UI auf Aus, CRSF (Modulkette), S.Port oder GPS einstellbar. In der Modulkette ist jedes Modul mit eigener Adresse ueber Lua einzeln einstellbar.
 - BOOT-Taster 3 s: WLAN-AP ein/aus. Status-LED nur beim S3.
 - Details und Bauanleitung: [firmware/README.md](firmware/README.md).
 
 ## Ordner
 - `hardware/`: KiCad-Projekt (Schaltplan, PCB, PDF, eigene Footprints, fp-lib-table). Entwurfsnotizen in [hardware/README-hardware.md](hardware/README-hardware.md).
-- `firmware/`: Firmware v4.03 (Arduino-Sketch).
+- `firmware/`: Firmware v4.04 (Arduino-Sketch).
 - `docs/`: Projektbeschreibung, Hardware-Beschreibung und Firmware-Spezifikation.
 
 ## Stand
 - Hardware: Schaltplan und PCB vorhanden. ERC/DRC noch in KiCad ausfuehren.
-- Firmware: v4.03 kompiliert fuer C3 und S3, noch nicht auf Hardware getestet.
+- Firmware: v4.04 kompiliert fuer C3 und S3, noch nicht auf Hardware getestet.
 
 ## Offene Punkte
 - Pad-Namen und Footprint am realen Board pruefen
 - Verlustleistung des ULN2803A bei mehreren Kanaelen mit 500 mA pruefen
 - Firmware auf Hardware testen (Einzelmodul und Kette mit 2-3 Modulen)
+- IO2-Strapping (Ausgang 3) beim ersten Aufbau pruefen
